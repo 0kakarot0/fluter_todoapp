@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todoapp/pages/settings_page.dart';
 
+import '../pages/archive_page.dart';
+
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
 
@@ -41,6 +43,26 @@ class MyDrawer extends StatelessWidget {
                     ),
                   ),
                 ),
+               ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ArchivePage(),
+                        ));
+                  },
+                  leading: Icon(
+                    Icons.favorite,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
+                  title: Text(
+                    "A R C H I E V E",
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary),
+                  ),
+                ),
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
@@ -52,7 +74,7 @@ class MyDrawer extends StatelessWidget {
                         ));
                   },
                   leading: Icon(
-                    Icons.home,
+                    Icons.settings,
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                   title: Text(
