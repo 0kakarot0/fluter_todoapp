@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todoapp/component/my_app_bar.dart';
 import 'package:todoapp/component/to_do_list.dart';
+import 'package:todoapp/data/database.dart';
 
 import '../component/dialog_box.dart';
 import '../component/my_drawer.dart';
@@ -13,19 +15,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // hive database reference
+  final _myBox = Hive.box("mybox");
+
+  // create instance of the DB class
+  ToDoDatabase toDoDatabase = ToDoDatabase();
+
+  // text edit controller
   final taskNameEditingController = TextEditingController();
 
-  //list of the To Do task
-  List toDoList = [
-    ["Make Tutorials", false],
-    ["Eat Food", true],
-  ];
+  @override
+  void initState() {
+    //if this is first time openning the app, then create default data
+    if (_myBox.get("TODOLIST") == null) {
+      toDoDatabase.createInitialData();
+    } else {
+      //if data already exist
+      toDoDatabase.loadData();
+    }
+    super.initState();
+  }
 
   //checkbox was trapped
   void checkBoxChanged(bool? value, int index) {
     setState(() {
-      toDoList[index][1] = !toDoList[index][1];
+      toDoDatabase.toDoList[index][1] = !toDoDatabase.toDoList[index][1];
     });
+    //update the database
+    toDoDatabase.updateDatabase();
   }
 
   // showDialogBox with text fields
@@ -48,32 +65,23 @@ class _HomePageState extends State<HomePage> {
 
   //save new task
   void saveNewTask() {
-    bool isTaskExist =
-        toDoList.any((task) => task[0] == taskNameEditingController.text);
+    setState(() {
+      toDoDatabase.toDoList.add([taskNameEditingController.text, false]);
+    });
+    taskNameEditingController.clear();
+    Navigator.of(context).pop();
 
-    if (!isTaskExist) {
-      setState(() {
-        toDoList.add([taskNameEditingController.text, false]);
-      });
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => const AlertDialog(
-          title: Text("Task Already Exist"),
-        ),
-      );
-      taskNameEditingController.clear();
-      Navigator.of(context).pop();
-    }
+    //update the database
+    toDoDatabase.updateDatabase();
   }
 
   //delete task
-  void deleteTask(int index){
+  void deleteTask(int index) {
     setState(() {
-      toDoList.removeAt(index);
+      toDoDatabase.toDoList.removeAt(index);
     });
-
-
+    //update the database
+    toDoDatabase.updateDatabase();
   }
 
   @override
@@ -97,14 +105,16 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: ListView.builder(
-        itemCount: toDoList.length,
+        itemCount: toDoDatabase.toDoList.length,
         itemBuilder: (context, index) {
-          return ToDoList(
-            taskName: toDoList[index][0],
-            taskCompleted: toDoList[index][1],
-            onChanged: (value) => checkBoxChanged(value, index),
-            deleteFunction: (context) => deleteTask(index),
-          );
+          return toDoDatabase.toDoList[index][1] == false
+              ? ToDoList(
+                  taskName: toDoDatabase.toDoList[index][0],
+                  taskCompleted: toDoDatabase.toDoList[index][1],
+                  onChanged: (value) => checkBoxChanged(value, index),
+                  deleteFunction: (context) => deleteTask(index),
+                )
+              : const SizedBox.shrink();
         },
       ),
     );
