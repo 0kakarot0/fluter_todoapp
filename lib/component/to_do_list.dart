@@ -31,7 +31,7 @@ class ToDoList extends StatelessWidget {
               onPressed: deleteFunction,
               icon: Icons.delete,
               backgroundColor: Colors.red.shade300,
-              borderRadius: BorderRadius.all(Radius.circular(12)), // Use BorderRadius.all() with Radius.circular()
+              borderRadius:  BorderRadius.circular(12),
             )
           ],
         ),
