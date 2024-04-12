@@ -3,9 +3,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todoapp/component/my_app_bar.dart';
 import 'package:todoapp/component/to_do_list.dart';
 import 'package:todoapp/data/database.dart';
+import 'package:todoapp/utils/delete_task.dart';
 
 import '../component/dialog_box.dart';
 import '../component/my_drawer.dart';
+import '../utils/edit_textcontroller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +25,9 @@ class _HomePageState extends State<HomePage> {
 
   // text edit controller
   final taskNameEditingController = TextEditingController();
+
+  // Edit Class Instance
+  EditTextEditController editText = EditTextEditController();
 
   @override
   void initState() {
@@ -58,6 +63,7 @@ class _HomePageState extends State<HomePage> {
             // Close the add task box
             Navigator.pop(context);
           },
+          buttonText: "Save",
         );
       },
     );
@@ -75,13 +81,45 @@ class _HomePageState extends State<HomePage> {
     toDoDatabase.updateDatabase();
   }
 
+  void editAddedTask(int index) {
+    // Set the text controller's text to the task name being edited
+    taskNameEditingController.text = toDoDatabase.toDoList[index][0];
+
+    // Show the dialog box for editing the task
+    showDialog(
+      context: context,
+      builder: (context) {
+        return MyDialogBox(
+          hintText: "Edit Task",
+          controller: taskNameEditingController,
+          onSave: () => editTask(index),
+          onCancel: () {
+            // Close the edit task box
+            Navigator.pop(context);
+          },
+          buttonText: "Update",
+        );
+      },
+    );
+  }
+
+// Edit task
+  void editTask(int index) {
+    setState(() {
+      editText.editTextEditController(
+          toDoDatabase, taskNameEditingController, index);
+
+      // Close the dialog box
+      Navigator.of(context).pop();
+    });
+  }
+
   //delete task
   void deleteTask(int index) {
+    TaskDeleter deleteTask = TaskDeleter();
     setState(() {
-      toDoDatabase.toDoList.removeAt(index);
+      deleteTask.deleteTask(toDoDatabase, index);
     });
-    //update the database
-    toDoDatabase.updateDatabase();
   }
 
   @override
@@ -113,6 +151,7 @@ class _HomePageState extends State<HomePage> {
                   taskCompleted: toDoDatabase.toDoList[index][1],
                   onChanged: (value) => checkBoxChanged(value, index),
                   deleteFunction: (context) => deleteTask(index),
+                  editFunction: (context) => editAddedTask(index),
                 )
               : const SizedBox.shrink();
         },
