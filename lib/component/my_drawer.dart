@@ -22,7 +22,7 @@ class MyDrawer extends StatelessWidget {
               children: [
                 DrawerHeader(
                   child: Icon(
-                    Icons.note_add_sharp,
+                    Icons.assignment_turned_in,
                     size: 60,
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
