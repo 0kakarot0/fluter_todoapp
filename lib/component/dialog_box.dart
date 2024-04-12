@@ -6,13 +6,15 @@ class MyDialogBox extends StatelessWidget {
   final String hintText;
   VoidCallback onSave;
   VoidCallback onCancel;
+  final String buttonText;
 
-   MyDialogBox({
+  MyDialogBox({
     super.key,
     required this.hintText,
     required this.controller,
     required this.onSave,
     required this.onCancel,
+    required this.buttonText
   });
 
   @override
@@ -35,7 +37,7 @@ class MyDialogBox extends StatelessWidget {
       ),
       actions: [
         MyButton(
-          buttonText: "Save",
+          buttonText: buttonText,
           onPressed: onSave,
         ),
 
