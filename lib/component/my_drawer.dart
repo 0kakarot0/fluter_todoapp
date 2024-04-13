@@ -54,7 +54,7 @@ class MyDrawer extends StatelessWidget {
                         ));
                   },
                   leading: Icon(
-                    Icons.favorite,
+                    Icons.history,
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                   title: Text(
@@ -94,11 +94,12 @@ class MyDrawer extends StatelessWidget {
             ),
             child: ListTile(
               leading: Icon(
-                Icons.home,
+                Icons.history_edu_sharp,
                 color: Theme.of(context).colorScheme.tertiary,
               ),
               title: Text(
-                "L O G O U T",
+                // "V E R S I O N",
+                "1.0.0",
                 style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
               ),
             ),
